@@ -1,4 +1,8 @@
 import math
+import random
+import numpy as np
+from matplotlib import pyplot as plt
+
 
 def distance((ax, ay), (bx, by)):
     "The distance between two (x, y) points."
@@ -32,7 +36,8 @@ def Stack():
 class FIFOQueue(Queue):
     """A First-In-First-Out Queue."""
     def __init__(self):
-        self.A = []; self.start = 0
+        self.A = [];
+        self.start = 0
     def append(self, item):
         self.A.append(item)
     def __len__(self):
@@ -43,7 +48,7 @@ class FIFOQueue(Queue):
         e = self.A[self.start]
         self.start += 1
         if self.start > 5 and self.start > len(self.A)/2:
-            self.A = self.A[self.start:]
+            self.A = self.A[self.start]
             self.start = 0
         return e
 
@@ -62,3 +67,111 @@ class PriorityQueue(Queue):
             return self.A.pop(0)[1]
         else:
             return self.A.pop()[1]
+
+
+
+def calculateStartPoint(vertices):
+    return searchPointByX(vertices,searchMinX(vertices))
+
+def calculateGoalPoint(vertices):
+    return searchPointByX(vertices,searchMaxX(vertices))
+
+def searchMinX(vertices):
+    minX=1000;
+    for v in vertices:
+        if(minX>v[0]):
+            minX=v[0]
+    return minX
+
+def searchMinY(vertices):
+    minY=1000;
+    for v in vertices:
+        if(minY>v[1]):
+            minY=v[1]
+    return minY
+
+def searchMaxX(vertices):
+    maxX=-1000;
+    for v in vertices:
+        if(maxX<v[0]):
+            maxX=v[0]
+    return maxX
+
+def searchMaxY(vertices):
+    maxY=-1000;
+    for v in vertices:
+        if(maxY<v[1]):
+            maxY=v[1]
+    return maxY
+
+def searchPointByX(vertices,x):
+    for v in vertices:
+        if(v[0]==x):
+            return v
+    return -1
+
+
+def getNeighbours(x,y,vor):
+    result=[]
+    for v in vor.ridge_vertices:
+        tmpX=vor.vertices[v,0]
+        tmpY=vor.vertices[v,1]
+        for i in range(0,tmpX.__len__()):
+            if(x==tmpX[i] and y==tmpY[i]):
+                for j in range(0,tmpX.__len__()):
+                    if((tmpX[j]!=x or tmpY[j]!=y) and controlArrayElement(tmpX[j],tmpY[j],result)==False):
+                        result.append((tmpX[j],tmpY[j]))
+                break
+    return result
+
+
+def controlArrayElement(x,y,array):
+    for element in array:
+        if(element[0]==x and element[1]==y):
+            return True
+    return False
+
+def createMatrix(vor):
+    matrix=[]
+    for v in vor.vertices:
+        arrayNeighbours=[v]
+        arrayNeighbours.append(getNeighbours(v[0],v[1],vor))
+        matrix.append(arrayNeighbours)
+    return matrix
+
+
+def update(x, **entries):
+    """Update a dict; or an object with slots; according to entries.
+    >>> update({'a': 1}, a=10, b=20)
+    {'a': 10, 'b': 20}
+    >>> update(Struct(a=1), a=10, b=20)
+    Struct(a=10, b=20)
+    """
+    if isinstance(x, dict):
+        x.update(entries)
+    else:
+        x.__dict__.update(entries)
+    return x
+
+
+def createPlot(points):
+    result=[]
+    tmp=[]
+    for i in range(0,len(points)):
+        tmp=[]
+        tmp.append(points[i])
+        ran=i
+        ran2=i
+        while(ran==i or ran2==i or ran==ran2 or searchPoint(result,ran)):
+            ran=random.randint(0,points.__len__()-1)
+            ran2=random.randint(0,points.__len__()-1)
+        tmp.append(points[ran])
+        tmp.append(points[ran2])
+        result.append(tmp)
+    return result
+
+def searchPoint(array,points):
+    for p in array:
+        if p[0]==points:
+            return True
+    return False

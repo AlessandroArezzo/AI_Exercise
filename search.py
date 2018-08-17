@@ -1,6 +1,10 @@
 
 import os
-from utils import FIFOQueue,PriorityQueue,Stack,infinity,memoize,name,print_table,update
+from utils import FIFOQueue,PriorityQueue,Stack,update
+import psutil
+import sys
+
+
 
 class Problem:
 
@@ -21,10 +25,14 @@ class Node:
 
     def __init__(self, state, parent=None, action=None, path_cost=0):
         """Create a search tree Node, derived from a parent by an action."""
-        self.update(self, state=state, parent=parent, action=action,
-               path_cost=path_cost, depth=0)
+        self.state=state
+        self.parent=parent
+        self.action=action
+        self.path_cost=path_cost
         if parent:
             self.depth = parent.depth + 1
+        else:
+            self.depth=0
 
     def __repr__(self):
         """(pf) Modified to display depth, f and h"""
@@ -37,7 +45,7 @@ class Node:
             return "<Node: depth=%d\n%s>" % (self.depth,self.state)
 
     def path(self):
-        "Create a list of nodes from the root to this node."
+        """Ricostruisce il cammino dal nodo corrente alla radice"""
         x, result = self, [self]
         while x.parent:
             result.append(x.parent)
@@ -47,10 +55,16 @@ class Node:
     def expand(self, problem):
         """Per ogni coppia (action, state) restituita dal metodo successor a partire dallo stato corrispondente
          al nodo in cui ci si trova (self, siamo nella classe Node) ed il quale si passa a successor stesso,
-         si crea un oggetto Node. Si ritornano infine tutti i nodi creati (la frontiera espansa)"""
+         si crea un oggetto Node. Si ritornano infine tutti i nodi creati (la frontiera espansa)
+        
         return [Node(next_state, self, action,
                      problem.path_cost(self.path_cost, self.state, action, next_state))
-                for (action, next_state) in problem.successor(self.state)]
+                for (action, next_state) in problem.successor(self.state)]"""
+        return[Node(next_state, self, action,
+                   problem.path_cost(self.path_cost, self.state, action, next_state))
+        for (action, next_state) in problem.successor(self.state)]
+
+
 
 
 def tree_search(problem, fringe):
@@ -60,7 +74,7 @@ def tree_search(problem, fringe):
         node = fringe.pop()
         # Print some information about search progress
         if node.depth > max_depth:
-            max_depth = node.depth # se depth del nodo è maggiore della max_depth, imposta questa come max_depth
+            max_depth = node.depth
             if max_depth < 50 or max_depth % 1000 == 0:
                 pid = os.getpid()
                 py = psutil.Process(pid)
@@ -68,17 +82,51 @@ def tree_search(problem, fringe):
                 print('Reached depth', max_depth,
                       'Open len', len(fringe),
                       'Memory used (MBytes)', memoryUse)
+        print node
 
+        state=node.state
         if problem.goal_test(node.state):
             return node
         fringe.extend(node.expand(problem))
     return None
 
 def breadth_first_tree_search(problem):
-    "Search the shallowest nodes in the search tree first. [p 74]"
     return tree_search(problem, FIFOQueue())
 
 
 def depth_first_tree_search(problem):
-    "Search the deepest nodes in the search tree first. [p 74]"
     return tree_search(problem, Stack())
+
+
+def depth_limited_search(problem, limit=10):
+    "[Fig. 3.12]"
+    def recursive_dls(node, problem, limit):
+        cutoff_occurred = False
+        if problem.goal_test(node.state):
+            return node
+        elif node.depth == limit:
+            return 'cutoff'
+        else:
+            for successor in node.expand(problem):
+                result = recursive_dls(successor, problem, limit)
+                if result == 'cutoff':
+                    cutoff_occurred = True
+                elif result != None:
+                    return result
+        if cutoff_occurred:
+            return 'cutoff'
+        else:
+            return None
+    # Body of depth_limited_search:
+    return recursive_dls(Node(problem.initial), problem, limit)
+
+def iterative_deepening_search(problem):
+    "[Fig. 3.13]"
+    for depth in xrange(sys.maxint):
+        result = depth_limited_search(problem, depth)
+        pid = os.getpid()
+        py = psutil.Process(pid)
+        memoryUse = py.memory_info()[0]/1024/1024
+        print('end depth_limited_search at depth', depth, 'mem (GBytes)', memoryUse)
+        if result is not 'cutoff':
+            return result

@@ -2,45 +2,57 @@ from search import Problem
 from copy import deepcopy
 import utils
 
+
 class Robot(Problem):
 
-    def __init__(self,initialX,initialY,goalX,goalY,tessellationGrid):
-        self.initial=RobotState(initialX,initialY)
-        self.goal=RobotState(goalX,goalY)
+    """Nell'esempio del Puzzle crea la configurazione iniziale attraverso un metodo make_initial_state che
+     crea una configurazione random del problema. In tal caso andrebbe creato allo stesso modo il nodo del goal
+     (nel puzzle non crea uno stato per il goal, configurazione statica).
+     In questa implementazione si suppone di avere come descrizione del problema una tessellationGrid
+     del tipo: [[(ptoX),(vicino n1 del ptoX),(vicino n2 del ptoX)...],[...()...],...]"""
+
+    def __init__(self,initialPoint,goalPoint,tessellationGrid):
+        self.initial=RobotState(initialPoint)
+        self.goal=RobotState(goalPoint)
         self.grid=tessellationGrid
         print("Start problem")
         print self.initial
 
 
     def successor(self, state):
-        for action in self.getActions(state.x,state.y):
+        result=[]
+        for action in self.getActions(state):
             nexts = state.move(action)
             if nexts is not None:
-                yield (action,nexts)
+                result.append((action,nexts))
+        return result
 
     def goal_test(self, state):
         return state.x==self.goal.x and state.y==self.goal.y
 
-    def getActions(self,x,y):
-        """TODO: da capire come fare ad ottenere i vettori direzione a partire dal punto del piano x,y ed alla grid stessa"""
+    def getActions(self,state):
+        actions=[]
+        for point in self.grid:
+            if(point[0]==(state.x,state.y)):
+                for i in range(1,point[0].__len__()+1):
+                    actions.append(point[i])
+                return actions
 
     def path_cost(self, c, state1, action, state2):
         return c+utils.distance((state1.x,state1.y),(state2.x,state2.y))
 
 class RobotState:
-    def __init__(self,x,y):
-        self.x=x
-        self.y=y
+    def __init__(self,point):
+        self.x=point[0]
+        self.y=point[1]
 
     def __str__(self):
         return "Il robot si trova nello stato ("+unicode(self.x)+","+unicode(self.y)+")"
 
-    def move(self,direction):
-        """ TODO: da capire come portare il robot nella nuova posizione a partire dalla direcrion che conterrà il vettore 
-         restituito dal metodo getActions di Robot"""
+    def move(self,point):
         ch=deepcopy(self)
-        ch.x = direction[0]
-        ch.y=direction[1]
+        ch.x = point[0]
+        ch.y=point[1]
         return ch
 
 
