@@ -1,4 +1,4 @@
-import math
+import math,bisect
 import random
 import numpy as np
 from matplotlib import pyplot as plt
@@ -53,9 +53,6 @@ class FIFOQueue(Queue):
         return e
 
 class PriorityQueue(Queue):
-    """A queue in which the minimum (or maximum) element (as determined by f and
-    order) is returned first. If order is min, the item with minimum f(x) is
-    returned first; if order is max, then it is the item with maximum f(x)."""
     def __init__(self, order=min, f=lambda x: x):
         update(self, A=[], order=order, f=f)
     def append(self, item):
@@ -67,6 +64,26 @@ class PriorityQueue(Queue):
             return self.A.pop(0)[1]
         else:
             return self.A.pop()[1]
+
+def memoize(fn, slot=None):
+    """Memoize fn: make it remember the computed value for any argument list.
+    If slot is specified, store result in that slot of first argument.
+    If slot is false, store results in a dictionary."""
+    if slot:
+        def memoized_fn(obj, *args):
+            if hasattr(obj, slot):
+                return getattr(obj, slot)
+            else:
+                val = fn(obj, *args)
+                setattr(obj, slot, val)
+                return val
+    else:
+        def memoized_fn(*args):
+            if not memoized_fn.cache.has_key(args):
+                memoized_fn.cache[args] = fn(*args)
+            return memoized_fn.cache[args]
+        memoized_fn.cache = {}
+    return memoized_fn
 
 
 

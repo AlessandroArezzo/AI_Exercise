@@ -1,6 +1,6 @@
 
 import os
-from utils import FIFOQueue,PriorityQueue,Stack,update
+from utils import FIFOQueue,PriorityQueue,Stack,memoize
 import psutil
 import sys
 
@@ -42,7 +42,7 @@ class Node:
                                                          self.h,
                                                          self.state)
         else:
-            return "<Node: depth=%d\n%s>" % (self.depth,self.state)
+            return "<Node: depth=%d\n%s, Cost:%f>" % (self.depth,self.state,self.path_cost)
 
     def path(self):
         """Ricostruisce il cammino dal nodo corrente alla radice"""
@@ -67,12 +67,13 @@ class Node:
 
 
 
-def tree_search(problem, fringe):
-    fringe.append(Node(problem.initial)) #Mette nella coda la radice dell'albero (il nodo associato allo stato iniziale)
+# Uninformed Search algorithms
+
+def tree_search(problem,fringe):
+    fringe.append(Node(problem.initial))
     max_depth = 0
     while fringe:
-        node = fringe.pop()
-        # Print some information about search progress
+        node=fringe.pop()
         if node.depth > max_depth:
             max_depth = node.depth
             if max_depth < 50 or max_depth % 1000 == 0:
@@ -82,13 +83,14 @@ def tree_search(problem, fringe):
                 print('Reached depth', max_depth,
                       'Open len', len(fringe),
                       'Memory used (MBytes)', memoryUse)
-        print node
-
-        state=node.state
+        print node #stampa nodo espanso
         if problem.goal_test(node.state):
             return node
-        fringe.extend(node.expand(problem))
+        newNode=node.expand(problem)
+        fringe.extend(newNode)
     return None
+
+
 
 def breadth_first_tree_search(problem):
     return tree_search(problem, FIFOQueue())
@@ -130,3 +132,44 @@ def iterative_deepening_search(problem):
         print('end depth_limited_search at depth', depth, 'mem (GBytes)', memoryUse)
         if result is not 'cutoff':
             return result
+
+def graph_search(problem, fringe):
+    """Search through the successors of a problem to find a goal.
+    The argument fringe should be an empty queue.
+    If two paths reach a state, only use the best one. [Fig. 3.18]"""
+    closed = {}
+    fringe.append(Node(problem.initial))
+    max_depth = 0
+    while fringe:
+        node = fringe.pop()
+        # Print some information about search progress
+        if node.depth > max_depth:
+            max_depth = node.depth
+            if max_depth < 50 or max_depth % 1000 == 0:
+                pid = os.getpid()
+                py = psutil.Process(pid)
+                memoryUse = py.memory_info()[0] / 1024 / 1024
+                print('Reached depth', max_depth,
+                      'Open len', len(fringe),
+                      'Memory used (MBytes)', memoryUse)
+
+        if problem.goal_test(node.state):
+            return node
+        serial = node.state.__str__()
+        if serial not in closed:
+            closed[serial] = True
+            fringe.extend(node.expand(problem))
+    return None
+
+def breadth_first_graph_search(problem):
+    "Search the shallowest nodes in the search tree first. [p 74]"
+    return graph_search(problem, FIFOQueue())
+
+def depth_first_graph_search(problem):
+    "Search the deepest nodes in the search tree first. [p 74]"
+    return graph_search(problem, Stack())
+
+# Informed (Heuristic) Search
+def best_first_graph_search(problem, f):
+    f = memoize(f, 'f')
+    return graph_search(problem, PriorityQueue(min, f))

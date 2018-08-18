@@ -5,7 +5,7 @@ import utils
 
 class Robot(Problem):
 
-    """Nell'esempio del Puzzle crea la configurazione iniziale attraverso un metodo make_initial_state che
+    """Nell'esempio del Puzzle si crea la configurazione iniziale attraverso un metodo make_initial_state che
      crea una configurazione random del problema. In tal caso andrebbe creato allo stesso modo il nodo del goal
      (nel puzzle non crea uno stato per il goal, configurazione statica).
      In questa implementazione si suppone di avere come descrizione del problema una tessellationGrid
@@ -21,7 +21,8 @@ class Robot(Problem):
 
     def successor(self, state):
         result=[]
-        for action in self.getActions(state):
+        actions=self.getActions(state)
+        for action in actions:
             nexts = state.move(action)
             if nexts is not None:
                 result.append((action,nexts))
@@ -34,12 +35,15 @@ class Robot(Problem):
         actions=[]
         for point in self.grid:
             if(point[0]==(state.x,state.y)):
-                for i in range(1,point[0].__len__()+1):
+                for i in range(1,point.__len__()):
                     actions.append(point[i])
                 return actions
 
     def path_cost(self, c, state1, action, state2):
         return c+utils.distance((state1.x,state1.y),(state2.x,state2.y))
+
+    def h(self,node):
+        utils.distance((node.x,node.y),(self.goal.x,self.goal.y))
 
 class RobotState:
     def __init__(self,point):
@@ -47,7 +51,7 @@ class RobotState:
         self.y=point[1]
 
     def __str__(self):
-        return "Il robot si trova nello stato ("+unicode(self.x)+","+unicode(self.y)+")"
+        return "STATO: ("+unicode(self.x)+","+unicode(self.y)+")"
 
     def move(self,point):
         ch=deepcopy(self)
