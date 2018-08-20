@@ -2,6 +2,7 @@ import math,bisect
 import random
 import numpy as np
 from matplotlib import pyplot as plt
+from Queue import PriorityQueue
 
 
 def distance((ax, ay), (bx, by)):
@@ -64,6 +65,7 @@ class PriorityQueue(Queue):
             return self.A.pop(0)[1]
         else:
             return self.A.pop()[1]
+
 
 def memoize(fn, slot=None):
     """Memoize fn: make it remember the computed value for any argument list.

@@ -38,12 +38,13 @@ class Robot(Problem):
                 for i in range(1,point.__len__()):
                     actions.append(point[i])
                 return actions
+        return None
 
     def path_cost(self, c, state1, action, state2):
         return c+utils.distance((state1.x,state1.y),(state2.x,state2.y))
 
     def h(self,node):
-        utils.distance((node.x,node.y),(self.goal.x,self.goal.y))
+        return node.state.h(self.goal)
 
 class RobotState:
     def __init__(self,point):
@@ -58,6 +59,9 @@ class RobotState:
         ch.x = point[0]
         ch.y=point[1]
         return ch
+
+    def h(self,goal):
+        return utils.distance((self.x,self.y),(goal.x,goal.y))
 
 
 
