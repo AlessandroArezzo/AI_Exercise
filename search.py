@@ -6,7 +6,6 @@ import sys
 import utils
 
 
-
 class Problem:
 
     def __init__(self,initial,goal):
@@ -73,6 +72,7 @@ class Node:
 def tree_search(problem,fringe):
     fringe.append(Node(problem.initial))
     max_depth = 0
+    explored=[]
     while fringe:
         node=fringe.pop()
         if node.depth > max_depth:
@@ -81,9 +81,9 @@ def tree_search(problem,fringe):
                 pid = os.getpid()
                 py = psutil.Process(pid)
                 memoryUse = py.memory_info()[0] / 1024 / 1024
-                print('Reached depth', max_depth,
-                      'Open len', len(fringe),
-                      'Memory used (MBytes)', memoryUse)
+                print('Reached depth: '+ unicode(max_depth),
+                      'Open len: '+ unicode(len(fringe)),
+                      'Memory used (MBytes): '+ unicode(memoryUse))
         print node #stampa nodo espanso
         if problem.goal_test(node.state):
             return node
@@ -103,6 +103,7 @@ def depth_first_tree_search(problem):
 
 def depth_limited_search(problem, limit=10):
     "[Fig. 3.12]"
+    explored=[]
     def recursive_dls(node, problem, limit):
         cutoff_occurred = False
         if problem.goal_test(node.state):
@@ -111,11 +112,13 @@ def depth_limited_search(problem, limit=10):
             return 'cutoff'
         else:
             for successor in node.expand(problem):
-                result = recursive_dls(successor, problem, limit)
-                if result == 'cutoff':
-                    cutoff_occurred = True
-                elif result != None:
-                    return result
+                if (not utils.searchPoint(explored,(successor.state.x, successor.state.y))):
+                    explored.append((successor.state.x, successor.state.y))
+                    result = recursive_dls(successor, problem, limit-1)
+                    if result == 'cutoff':
+                        cutoff_occurred = True
+                    elif result != None:
+                        return result
         if cutoff_occurred:
             return 'cutoff'
         else:
@@ -141,25 +144,28 @@ def graph_search(problem, fringe):
     closed = {}
     fringe.append(Node(problem.initial))
     max_depth = 0
+    explored=[]
     while fringe:
         node = fringe.pop()
         # Print some information about search progress
-        if node.depth > max_depth:
-            max_depth = node.depth
-            if max_depth < 50 or max_depth % 1000 == 0:
-                pid = os.getpid()
-                py = psutil.Process(pid)
-                memoryUse = py.memory_info()[0] / 1024 / 1024
-                print('Reached depth', max_depth,
-                      'Open len', len(fringe),
-                      'Memory used (MBytes)', memoryUse)
+        if (not utils.searchPoint(explored, (node.state.x, node.state.y))):
+            explored.append((node.state.x, node.state.y))
+            if node.depth > max_depth:
+                max_depth = node.depth
+                if max_depth < 50 or max_depth % 1000 == 0:
+                    pid = os.getpid()
+                    py = psutil.Process(pid)
+                    memoryUse = py.memory_info()[0] / 1024 / 1024
+                    print('Reached depth', max_depth,
+                          'Open len', len(fringe),
+                          'Memory used (MBytes)', memoryUse)
 
-        if problem.goal_test(node.state):
-            return node
-        serial = node.state.__str__()
-        if serial not in closed:
-            closed[serial] = True
-            fringe.extend(node.expand(problem))
+            if problem.goal_test(node.state):
+                return node
+            serial = node.state.__str__()
+            if serial not in closed:
+                closed[serial] = True
+                fringe.extend(node.expand(problem))
     return None
 
 def breadth_first_graph_search(problem):

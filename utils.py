@@ -1,8 +1,7 @@
 import math,bisect
 import random
-import numpy as np
 from matplotlib import pyplot as plt
-from Queue import PriorityQueue
+
 
 
 def distance((ax, ay), (bx, by)):
@@ -191,6 +190,25 @@ def createPlot(points):
 
 def searchPoint(array,points):
     for p in array:
-        if p[0]==points:
+        if p==points:
             return True
     return False
+
+
+def drawPlot(matrix,result,algoritmo):
+    fig = plt.figure()
+    for region in matrix:
+        for i in range(1, region.__len__()):
+            plt.plot([region[0][0], region[i][0]], [region[0][1], region[i][1]], 'black' )
+
+    plt.xlim(0, 11)
+    plt.ylim(0, 9)
+
+    plt.title(algoritmo+"--COST:")
+    plt.draw()
+    plt.show(block=False)
+    for node in reversed(result):
+        plt.title(algoritmo+"--COST: "+unicode(node.path_cost))
+        if (node.parent):
+            plt.plot([node.parent.state.x, node.state.x], [node.parent.state.y, node.state.y], '-r')
+            plt.pause(4)
