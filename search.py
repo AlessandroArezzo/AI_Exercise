@@ -75,20 +75,22 @@ def tree_search(problem,fringe):
     explored=[]
     while fringe:
         node=fringe.pop()
-        if node.depth > max_depth:
-            max_depth = node.depth
-            if max_depth < 50 or max_depth % 1000 == 0:
-                pid = os.getpid()
-                py = psutil.Process(pid)
-                memoryUse = py.memory_info()[0] / 1024 / 1024
-                print('Reached depth: '+ unicode(max_depth),
-                      'Open len: '+ unicode(len(fringe)),
-                      'Memory used (MBytes): '+ unicode(memoryUse))
-        print node #stampa nodo espanso
-        if problem.goal_test(node.state):
-            return node
-        newNode=node.expand(problem)
-        fringe.extend(newNode)
+        if(not utils.searchPoint(explored,(node.state.x,node.state.y))):
+            explored.append((node.state.x,node.state.y))
+            if node.depth > max_depth:
+                max_depth = node.depth
+                if max_depth < 50 or max_depth % 1000 == 0:
+                    pid = os.getpid()
+                    py = psutil.Process(pid)
+                    memoryUse = py.memory_info()[0] / 1024 / 1024
+                    print('Reached depth: '+ unicode(max_depth),
+                          'Open len: '+ unicode(len(fringe)),
+                          'Memory used (MBytes): '+ unicode(memoryUse))
+            print node #stampa nodo espanso
+            if problem.goal_test(node.state):
+                return node
+            newNode=node.expand(problem)
+            fringe.extend(newNode)
     return None
 
 
@@ -102,25 +104,26 @@ def depth_first_tree_search(problem):
 
 
 def depth_limited_search(problem, limit=10):
-    "[Fig. 3.12]"
     explored=[]
     def recursive_dls(node, problem, limit):
         cutoff_occurred = False
-        if problem.goal_test(node.state):
-            return node
-        elif node.depth == limit:
-            return 'cutoff'
-        else:
-            for successor in node.expand(problem):
-                if (not utils.searchPoint(explored,(successor.state.x, successor.state.y))):
-                    explored.append((successor.state.x, successor.state.y))
-                    result = recursive_dls(successor, problem, limit-1)
+        if(not utils.searchPoint(explored,(node.state.x,node.state.y))):
+            explored.append((node.state.x,node.state.y))
+            if problem.goal_test(node.state):
+                return node
+            elif node.depth == limit:
+                return 'cutoff'
+            else:
+                for successor in node.expand(problem):
+                    result = recursive_dls(successor, problem, limit)
                     if result == 'cutoff':
                         cutoff_occurred = True
                     elif result != None:
                         return result
-        if cutoff_occurred:
-            return 'cutoff'
+            if cutoff_occurred:
+                return 'cutoff'
+            else:
+                return None
         else:
             return None
     # Body of depth_limited_search:
@@ -159,7 +162,6 @@ def graph_search(problem, fringe):
                     print('Reached depth', max_depth,
                           'Open len', len(fringe),
                           'Memory used (MBytes)', memoryUse)
-
             if problem.goal_test(node.state):
                 return node
             serial = node.state.__str__()
@@ -169,11 +171,9 @@ def graph_search(problem, fringe):
     return None
 
 def breadth_first_graph_search(problem):
-    "Search the shallowest nodes in the search tree first. [p 74]"
     return graph_search(problem, FIFOQueue())
 
 def depth_first_graph_search(problem):
-    "Search the deepest nodes in the search tree first. [p 74]"
     return graph_search(problem, Stack())
 
 # Informed (Heuristic) Search
@@ -185,5 +185,8 @@ def astar_search(problem, h=None):
     h = h or problem.h
     #h = memoize(h, 'h')
     def f(n):
-        return n.path_cost + h(n)
+        priority= n.path_cost + h(n)
+        return priority
     return best_first_graph_search(problem, f)
+
+
