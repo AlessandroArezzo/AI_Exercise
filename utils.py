@@ -151,22 +151,6 @@ def update(x, **entries):
     return x
 
 
-def createPlot(points):
-    result=[]
-    tmp=[]
-    for i in range(0,len(points)):
-        tmp=[]
-        tmp.append(points[i])
-        ran=i
-        ran2=i
-        while(ran==i or ran2==i or ran==ran2 or searchPoint(result,ran)):
-            ran=random.randint(0,points.__len__()-1)
-            ran2=random.randint(0,points.__len__()-1)
-        tmp.append(points[ran])
-        tmp.append(points[ran2])
-        result.append(tmp)
-    return result
-
 def searchPoint(array,points):
     for p in array:
         if p==points:
@@ -177,7 +161,7 @@ def searchPoint(array,points):
 def printResult(matrix,result,algoritmo,points,initialPoint,goalPoint):
     for region in matrix:
         for i in range(1, region.__len__()):
-            plt.plot([region[0][0], region[i][0]], [region[0][1], region[i][1]], 'black' )
+            plt.plot([region[0][0], region[i][0]], [region[0][1], region[i][1]], 'black',linewidth=0.3 )
 
     plt.xlim(searchMinX(points)-1, searchMaxX(points)+1)
     plt.ylim(searchMinY(points)-1, searchMaxY(points)+1)
@@ -192,16 +176,16 @@ def printResult(matrix,result,algoritmo,points,initialPoint,goalPoint):
         plt.title(algoritmo+"--COST: "+unicode(node.path_cost))
         print node
         if (node.parent):
-            plt.plot([node.parent.state.x, node.state.x], [node.parent.state.y, node.state.y], '-r')
+            plt.plot([node.parent.state.x, node.state.x], [node.parent.state.y, node.state.y], '-r',linewidth=2)
             plt.pause(1.5)
     plt.close()
 
 def createGridActions(points):
     result=[]
-    tmpPoint1=None
-    tmpPoint2=None
     for p in points:
         tmp=[]
+        tmpPoint1 = None
+        tmpPoint2 = None
         distanceMin1 = 10000
         distanceMin2 = 10000
         distancePoints = 0
@@ -263,3 +247,16 @@ def searchGoalPoint(points):
             maxX=p[0]
             point=p
     return point
+
+def createGrid(points,vertices):
+    result=[]
+    for i in range(0,len(points)):
+        tmp=[]
+        tmp.append(points[i])
+        result.append(tmp)
+    for v in vertices:
+        for j in v:
+            for z in v:
+                if  j!=z and (not searchPoint(result[j],points[z])):
+                    result[j].append(points[z])
+    return result
