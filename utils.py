@@ -5,24 +5,11 @@ from matplotlib import pyplot as plt
 
 
 def distance((ax, ay), (bx, by)):
-    "The distance between two (x, y) points."
     return math.hypot((ax - bx), (ay - by))
 
 
 
 class Queue:
-    """Queue is an abstract class/interface. There are three types:
-        Stack(): A Last In First Out Queue.
-        FIFOQueue(): A First In First Out Queue.
-        PriorityQueue(lt): Queue where items are sorted by lt, (default <).
-    Each type supports the following methods and functions:
-        q.append(item)  -- add an item to the queue
-        q.extend(items) -- equivalent to: for item in items: q.append(item)
-        q.pop()         -- return the top item from the queue
-        len(q)          -- number of items in q (also q.__len())
-    Note that isinstance(Stack(), Queue) is false, because we implement stacks
-    as lists.  If Python ever gets interfaces, Queue will be an interface."""
-
     def __init__(self):
         pass #abstract
 
@@ -30,11 +17,9 @@ class Queue:
         for item in items: self.append(item)
 
 def Stack():
-    """Return an empty list, suitable as a Last-In-First-Out Queue."""
     return []
 
 class FIFOQueue(Queue):
-    """A First-In-First-Out Queue."""
     def __init__(self):
         self.A = [];
         self.start = 0
@@ -47,11 +32,6 @@ class FIFOQueue(Queue):
     def pop(self):
         e = self.A[self.start]
         self.start += 1
-        """
-        if self.start > 5 and self.start > len(self.A)/2:
-            self.A = self.A[self.start]
-            self.start = 0
-        """
         return e
 
 class PriorityQueue(Queue):
@@ -69,9 +49,6 @@ class PriorityQueue(Queue):
 
 
 def memoize(fn, slot=None):
-    """Memoize fn: make it remember the computed value for any argument list.
-    If slot is specified, store result in that slot of first argument.
-    If slot is false, store results in a dictionary."""
     if slot:
         def memoized_fn(obj, *args):
             if hasattr(obj, slot):
@@ -197,20 +174,92 @@ def searchPoint(array,points):
     return False
 
 
-def drawPlot(matrix,result,algoritmo):
-    fig = plt.figure()
+def printResult(matrix,result,algoritmo,points,initialPoint,goalPoint):
     for region in matrix:
         for i in range(1, region.__len__()):
             plt.plot([region[0][0], region[i][0]], [region[0][1], region[i][1]], 'black' )
 
-    plt.xlim(0, 11)
-    plt.ylim(0, 9)
+    plt.xlim(searchMinX(points)-1, searchMaxX(points)+1)
+    plt.ylim(searchMinY(points)-1, searchMaxY(points)+1)
+    plt.plot(initialPoint[0], initialPoint[1], 'bp', markersize=14)
+    plt.plot(goalPoint[0], goalPoint[1], 'rp', markersize=14)
 
     plt.title(algoritmo+"--COST:")
     plt.draw()
     plt.show(block=False)
+    plt.pause(1)
     for node in reversed(result):
         plt.title(algoritmo+"--COST: "+unicode(node.path_cost))
+        print node
         if (node.parent):
             plt.plot([node.parent.state.x, node.state.x], [node.parent.state.y, node.state.y], '-r')
-            plt.pause(4)
+            plt.pause(1.5)
+    plt.close()
+
+def createGridActions(points):
+    result=[]
+    tmpPoint1=None
+    tmpPoint2=None
+    for p in points:
+        tmp=[]
+        distanceMin1 = 10000
+        distanceMin2 = 10000
+        distancePoints = 0
+        tmp.append((p))
+        for point in points:
+            if(point is not p):
+                distancePoints=distance(p,point)
+                if(distancePoints<distanceMin1):
+                    distanceMin1=distancePoints
+                    tmpPoint1=point
+                elif (distancePoints < distanceMin2):
+                    distanceMin2 = distancePoints
+                    tmpPoint2= point
+        tmp.append(tmpPoint1)
+        tmp.append(tmpPoint2)
+        result.append(tmp)
+
+    i=0
+    for r in result:
+        for p in range(1,len(r)):
+            i=searchPointInMatrix(result,r[0],r[p])
+            if(i is not -1):
+                result[i].append(r[0])
+    return result
+
+def searchPointInMatrix(array,point1,point2):
+    for i in range(0,len(array)):
+        if(array[i][0]==point2):
+            for p in array[i]:
+                if(p==point1):
+                    return -1
+            return i
+    return -1
+
+def generateRandomPoints(num,min=0,max=10):
+    i=1
+    result=[]
+    while(i<num):
+        tmp=(random.randint(min,max),random.randint(min,max))
+        if(not searchPoint(result,tmp)):
+            result.append(tmp)
+            i+=1
+    return result
+
+def searchInitialPoint(points):
+    minX=10000
+    point=None
+    for p in points:
+        if(p[0]<minX):
+            minX=p[0]
+            point=p
+    return point
+
+def searchGoalPoint(points):
+    maxX=0
+    point=None
+    for p in points:
+        if(p[0]>maxX):
+            maxX=p[0]
+            point=p
+    return point

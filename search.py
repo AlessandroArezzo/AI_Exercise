@@ -1,7 +1,5 @@
-
-import os
 from utils import FIFOQueue,PriorityQueue,Stack,memoize
-import psutil
+#import psutil
 import sys
 import utils
 
@@ -24,7 +22,6 @@ class Problem:
 class Node:
 
     def __init__(self, state, parent=None, action=None, path_cost=0):
-        """Create a search tree Node, derived from a parent by an action."""
         self.state=state
         self.parent=parent
         self.action=action
@@ -35,7 +32,6 @@ class Node:
             self.depth=0
 
     def __repr__(self):
-        """(pf) Modified to display depth, f and h"""
         if hasattr(self,'f'):
             return "<Node: f=%d, depth=%d, h=%d\n%s>" % (self.f,
                                                          self.depth,
@@ -53,13 +49,11 @@ class Node:
         return result
 
     def expand(self, problem):
-        """Per ogni coppia (action, state) restituita dal metodo successor a partire dallo stato corrispondente
+        """
+        Per ogni coppia (action, state) restituita dal metodo successor a partire dallo stato corrispondente
          al nodo in cui ci si trova (self, siamo nella classe Node) ed il quale si passa a successor stesso,
          si crea un oggetto Node. Si ritornano infine tutti i nodi creati (la frontiera espansa)
-        
-        return [Node(next_state, self, action,
-                     problem.path_cost(self.path_cost, self.state, action, next_state))
-                for (action, next_state) in problem.successor(self.state)]"""
+        """
         return[Node(next_state, self, action,
                    problem.path_cost(self.path_cost, self.state, action, next_state))
         for (action, next_state) in problem.successor(self.state)]
@@ -77,6 +71,7 @@ def tree_search(problem,fringe):
         node=fringe.pop()
         if(not utils.searchPoint(explored,(node.state.x,node.state.y))):
             explored.append((node.state.x,node.state.y))
+            """
             if node.depth > max_depth:
                 max_depth = node.depth
                 if max_depth < 50 or max_depth % 1000 == 0:
@@ -86,6 +81,7 @@ def tree_search(problem,fringe):
                     print('Reached depth: '+ unicode(max_depth),
                           'Open len: '+ unicode(len(fringe)),
                           'Memory used (MBytes): '+ unicode(memoryUse))
+            """
             print node #stampa nodo espanso
             if problem.goal_test(node.state):
                 return node
@@ -130,20 +126,16 @@ def depth_limited_search(problem, limit=10):
     return recursive_dls(Node(problem.initial), problem, limit)
 
 def iterative_deepening_search(problem):
-    "[Fig. 3.13]"
     for depth in xrange(sys.maxint):
         result = depth_limited_search(problem, depth)
-        pid = os.getpid()
-        py = psutil.Process(pid)
-        memoryUse = py.memory_info()[0]/1024/1024
-        print('end depth_limited_search at depth', depth, 'mem (GBytes)', memoryUse)
+        #pid = os.getpid()
+        #py = psutil.Process(pid)
+        #memoryUse = py.memory_info()[0]/1024/1024
+        #print('end depth_limited_search at depth', depth, 'mem (GBytes)', memoryUse)
         if result is not 'cutoff':
             return result
 
 def graph_search(problem, fringe):
-    """Search through the successors of a problem to find a goal.
-    The argument fringe should be an empty queue.
-    If two paths reach a state, only use the best one. [Fig. 3.18]"""
     closed = {}
     fringe.append(Node(problem.initial))
     max_depth = 0
@@ -153,6 +145,7 @@ def graph_search(problem, fringe):
         # Print some information about search progress
         if (not utils.searchPoint(explored, (node.state.x, node.state.y))):
             explored.append((node.state.x, node.state.y))
+            """
             if node.depth > max_depth:
                 max_depth = node.depth
                 if max_depth < 50 or max_depth % 1000 == 0:
@@ -162,6 +155,7 @@ def graph_search(problem, fringe):
                     print('Reached depth', max_depth,
                           'Open len', len(fringe),
                           'Memory used (MBytes)', memoryUse)
+            """
             if problem.goal_test(node.state):
                 return node
             serial = node.state.__str__()
