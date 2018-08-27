@@ -1,8 +1,9 @@
 from utils import FIFOQueue,PriorityQueue,Stack
-#import psutil
+import psutil
 import sys
 import utils
-
+import os
+import timeit
 
 class Problem:
 
@@ -64,25 +65,21 @@ class Node:
 # Uninformed Search algorithms
 
 def tree_search(problem,fringe):
+    closed = {}
     fringe.append(Node(problem.initial))
     max_depth = 0
-    explored=[]
     while fringe:
         node=fringe.pop()
-        if(not utils.searchPoint(explored,(node.state.x,node.state.y))):
-            explored.append((node.state.x,node.state.y))
-            """
+        serial = node.state.__str__()
+        if serial not in closed:
+            closed[serial] = True
             if node.depth > max_depth:
                 max_depth = node.depth
                 if max_depth < 50 or max_depth % 1000 == 0:
                     pid = os.getpid()
                     py = psutil.Process(pid)
                     memoryUse = py.memory_info()[0] / 1024 / 1024
-                    print('Reached depth: '+ unicode(max_depth),
-                          'Open len: '+ unicode(len(fringe)),
-                          'Memory used (MBytes): '+ unicode(memoryUse))
-            """
-            print node #stampa nodo espanso
+                    print ("Reached depth: "+ unicode(max_depth)+" Open len: "+ unicode(len(fringe))+" Memory used (MBytes): "+ unicode(memoryUse))
             if problem.goal_test(node.state):
                 return node
             newNode=node.expand(problem)
@@ -100,11 +97,12 @@ def depth_first_tree_search(problem):
 
 
 def depth_limited_search(problem, limit=10):
-    explored=[]
+    closed={}
     def recursive_dls(node, problem, limit):
         cutoff_occurred = False
-        if(not utils.searchPoint(explored,(node.state.x,node.state.y))):
-            explored.append((node.state.x,node.state.y))
+        serial = node.state.__str__()
+        if serial not in closed:
+            closed[serial] = True
             if problem.goal_test(node.state):
                 return node
             elif node.depth == limit:
@@ -122,16 +120,15 @@ def depth_limited_search(problem, limit=10):
                 return None
         else:
             return None
-    # Body of depth_limited_search:
     return recursive_dls(Node(problem.initial), problem, limit)
 
 def iterative_deepening_search(problem):
     for depth in xrange(sys.maxint):
         result = depth_limited_search(problem, depth)
-        #pid = os.getpid()
-        #py = psutil.Process(pid)
-        #memoryUse = py.memory_info()[0]/1024/1024
-        #print('end depth_limited_search at depth', depth, 'mem (GBytes)', memoryUse)
+        pid = os.getpid()
+        py = psutil.Process(pid)
+        memoryUse = py.memory_info()[0]/1024/1024
+        print('end depth_limited_search at depth', depth, 'mem (GBytes)', memoryUse)
         if result is not 'cutoff':
             return result
 
@@ -139,29 +136,22 @@ def graph_search(problem, fringe):
     closed = {}
     fringe.append(Node(problem.initial))
     max_depth = 0
-    explored=[]
     while fringe:
         node = fringe.pop()
         # Print some information about search progress
-        if (not utils.searchPoint(explored, (node.state.x, node.state.y))):
-            explored.append((node.state.x, node.state.y))
-            """
-            if node.depth > max_depth:
-                max_depth = node.depth
-                if max_depth < 50 or max_depth % 1000 == 0:
-                    pid = os.getpid()
-                    py = psutil.Process(pid)
-                    memoryUse = py.memory_info()[0] / 1024 / 1024
-                    print('Reached depth', max_depth,
-                          'Open len', len(fringe),
-                          'Memory used (MBytes)', memoryUse)
-            """
-            if problem.goal_test(node.state):
-                return node
-            serial = node.state.__str__()
-            if serial not in closed:
-                closed[serial] = True
-                fringe.extend(node.expand(problem))
+        if node.depth > max_depth:
+            max_depth = node.depth
+            if max_depth < 50 or max_depth % 1000 == 0:
+                pid = os.getpid()
+                py = psutil.Process(pid)
+                memoryUse = py.memory_info()[0] / 1024 / 1024
+                print ("Reached depth: "+ unicode(max_depth)+" Open len: "+ unicode(len(fringe))+" Memory used (MBytes): "+ unicode(memoryUse))
+        if problem.goal_test(node.state):
+            return node
+        serial = node.state.__str__()
+        if serial not in closed:
+            closed[serial] = True
+            fringe.extend(node.expand(problem))
     return None
 
 def breadth_first_graph_search(problem):
@@ -174,6 +164,12 @@ def depth_first_graph_search(problem):
 def best_first_graph_search(problem, f):
     return graph_search(problem, PriorityQueue(min, f))
 
+def greedy_best_first_graph_search(problem,h=None):
+    h = h or problem.h
+    def f(n):
+        return h(n)
+    return best_first_graph_search(problem, f)
+
 def astar_search(problem, h=None):
     h = h or problem.h
     def f(n):
@@ -182,3 +178,14 @@ def astar_search(problem, h=None):
     return best_first_graph_search(problem, f)
 
 
+def runSearchers(problem,points,searchers=[breadth_first_tree_search,depth_first_tree_search,depth_limited_search,iterative_deepening_search,greedy_best_first_graph_search,astar_search],limit=10):
+    for s in searchers:
+        print ("Running %s" % s.__name__)
+        if (s == depth_limited_search):
+            node_result = s(problem, limit)
+        else:
+            node_result = s(problem)
+
+        path_result = node_result.path()
+        print ("Printing result...")
+        utils.printResult(problem.grid, path_result, s.__name__, points, problem)

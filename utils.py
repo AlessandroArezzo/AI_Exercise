@@ -87,15 +87,15 @@ def searchPoint(array,points):
     return False
 
 
-def printResult(matrix,result,algoritmo,points,initialPoint,goalPoint):
+def printResult(matrix,result,algoritmo,points,problem):
     for region in matrix:
         for i in range(1, region.__len__()):
             plt.plot([region[0][0], region[i][0]], [region[0][1], region[i][1]], 'black',linewidth=0.3 )
 
     plt.xlim(searchMinX(points)-len(points)*10/100, searchMaxX(points)+len(points)*10/100)
     plt.ylim(searchMinY(points)-len(points)*10/100, searchMaxY(points)+len(points)*10/100)
-    plt.plot(initialPoint[0], initialPoint[1], 'bp', markersize=14)
-    plt.plot(goalPoint[0], goalPoint[1], 'rp', markersize=14)
+    plt.plot(problem.initial.x, problem.initial.y, 'bp', markersize=14)
+    plt.plot(problem.goal.x, problem.goal.y, 'rp', markersize=14)
 
     plt.title(algoritmo+"--COST:")
     plt.draw()
@@ -104,7 +104,6 @@ def printResult(matrix,result,algoritmo,points,initialPoint,goalPoint):
     i=0 # variabile utile per stampare il numero di passi compiuti dal robot
     for node in reversed(result):
         plt.title(algoritmo+"--COST: "+unicode(node.path_cost)+"--N.PASSI:"+unicode(i))
-        print node
         if (node.parent):
             plt.plot([node.parent.state.x, node.state.x], [node.parent.state.y, node.state.y], '-r',linewidth=2)
             plt.pause(1.5)

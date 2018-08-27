@@ -1,5 +1,5 @@
 from Robot import Robot
-from search import breadth_first_tree_search,depth_first_tree_search,depth_limited_search,iterative_deepening_search,best_first_graph_search,astar_search
+from search import breadth_first_tree_search,depth_first_tree_search,depth_limited_search,iterative_deepening_search,best_first_graph_search,astar_search,greedy_best_first_graph_search,runSearchers
 import utils
 from scipy.spatial import Delaunay
 
@@ -30,55 +30,9 @@ while(True):
         matrix = utils.createGrid(points, vertices)
         initialPoint = utils.searchInitialPoint(points)
         goalPoint = utils.searchGoalPoint(points)
-        robot = Robot(initialPoint, goalPoint, matrix)
+        problem = Robot(initialPoint, goalPoint, matrix)
 
-        #breadth_first_tree_search
-        print "breadth_first_tree_search"
-        node_result=breadth_first_tree_search(robot)
-        path_result=node_result.path()
-        print "RESULT breadth_first_tree_search"
-        utils.printResult(matrix,path_result,"Breadth_first_tree_search",points,initialPoint,goalPoint)
-
-        #depth_first_tree_search
-        print "depth_first_tree_search"
-        node_result=depth_first_tree_search(robot)
-        path_result=node_result.path()
-        print "RESULT depth_first_tree_search"
-        utils.printResult(matrix,path_result,"Depth_first_tree_search",points,initialPoint,goalPoint)
-
-        # depth_first_tree_search
-        print "depth_first_tree_search"
-        node_result = depth_limited_search(robot, limit)
-        if node_result == 'cutoff':
-            print "Problema non risolvibile ponendo come limite di profondita' " + unicode(limit)
-        elif node_result == None:
-            print "Il problema non ha soluzione"
-        else:
-            path_result = node_result.path()
-            print "RESULT depth_limited_search"
-            utils.printResult(matrix, path_result, "Depth_limited_search", points, initialPoint, goalPoint)
-
-        # iterative_deepening_search
-        print "iterative_deepening_search"
-        node_result = iterative_deepening_search(robot)
-        path_result = node_result.path()
-        print "RESULT iterative_deepening_search"
-        utils.printResult(matrix, path_result, "Iterative_deepening_search", points, initialPoint, goalPoint)
-
-        # best_first_graph_search
-        print "best_first_graph_search"
-        node_result = best_first_graph_search(robot, robot.h)
-        path_result = node_result.path()
-        print "RESULT best_first_graph_search"
-        utils.printResult(matrix, path_result, "Best_first_graph_search", points, initialPoint, goalPoint)
-
-        # astar_search
-        print "astar_search"
-        node_result = astar_search(robot, robot.h)
-        path_result = node_result.path()
-        print "RESULT astar_search"
-        utils.printResult(matrix, path_result, "Astar_search", points, initialPoint, goalPoint)
-
+        searchers=[breadth_first_tree_search,depth_first_tree_search,depth_limited_search,iterative_deepening_search,greedy_best_first_graph_search,astar_search]
+        runSearchers(problem,points,searchers,limit)
     else:
         break
-
