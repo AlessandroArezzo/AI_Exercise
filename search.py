@@ -1,4 +1,4 @@
-from utils import FIFOQueue,PriorityQueue,Stack,memoize
+from utils import FIFOQueue,PriorityQueue,Stack
 #import psutil
 import sys
 import utils
@@ -172,12 +172,10 @@ def depth_first_graph_search(problem):
 
 # Informed (Heuristic) Search
 def best_first_graph_search(problem, f):
-    #f = memoize(f, 'f')
     return graph_search(problem, PriorityQueue(min, f))
 
 def astar_search(problem, h=None):
     h = h or problem.h
-    #h = memoize(h, 'h')
     def f(n):
         priority= n.path_cost + h(n)
         return priority
