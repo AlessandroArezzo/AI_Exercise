@@ -88,16 +88,17 @@ def searchPoint(array,points):
 
 
 def printResult(matrix,result,algoritmo,points,problem):
-    for region in matrix:
-        for i in range(1, region.__len__()):
-            plt.plot([region[0][0], region[i][0]], [region[0][1], region[i][1]], 'black',linewidth=0.3 )
+
+    for point in matrix:
+        for neighbour in matrix[point]:
+            plt.plot([point[0], neighbour[0]], [point[1], neighbour[1]], 'black',linewidth=0.3 )
 
     plt.xlim(searchMinX(points)-len(points)*10/100, searchMaxX(points)+len(points)*10/100)
     plt.ylim(searchMinY(points)-len(points)*10/100, searchMaxY(points)+len(points)*10/100)
     plt.plot(problem.initial.x, problem.initial.y, 'bp', markersize=14)
     plt.plot(problem.goal.x, problem.goal.y, 'rp', markersize=14)
 
-    plt.title(algoritmo+"--COST:")
+    plt.title(algoritmo+"--COST: --N.PASSI")
     plt.draw()
     plt.show(block=False)
     plt.pause(1)
@@ -109,7 +110,6 @@ def printResult(matrix,result,algoritmo,points,problem):
             plt.pause(1.5)
         i+=1
     plt.close()
-
 
 def generateRandomPoints(num,min=0,max=10):
     i=1
@@ -141,8 +141,10 @@ def searchGoalPoint(points):
             point=p
     return point
 
-def createGrid(points,vertices):
-    result=[]
+def createDict(points,vertices):
+    #result=[]
+    dict={}
+    """
     for i in range(0,len(points)):
         tmp=[]
         tmp.append(points[i])
@@ -152,4 +154,16 @@ def createGrid(points,vertices):
             for z in v:
                 if  j!=z and (not searchPoint(result[j],points[z])):
                     result[j].append(points[z])
-    return result
+                    
+    """
+
+    for v in vertices:
+        for j in v:
+            serial = points[j]
+            if serial not in dict:
+                dict[serial]=[]
+            for z in v:
+                if(z!=j and (not searchPoint(dict[serial],points[z]))):
+                    dict[serial].append(points[z])
+
+    return dict

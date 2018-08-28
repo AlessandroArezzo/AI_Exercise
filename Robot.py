@@ -32,6 +32,8 @@ class Robot(Problem):
         return state.x==self.goal.x and state.y==self.goal.y
 
     def getActions(self,state):
+        return self.grid[(state.x,state.y)]
+        """
         actions=[]
         for point in self.grid:
             if(point[0]==(state.x,state.y)):
@@ -39,7 +41,7 @@ class Robot(Problem):
                     actions.append(point[i])
                 return actions
         return None
-
+        """
     def path_cost(self, c, state1, action, state2):
         return c+utils.distance((state1.x,state1.y),(state2.x,state2.y))
 

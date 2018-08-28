@@ -1,5 +1,5 @@
 from Robot import Robot
-from search import breadth_first_tree_search,depth_first_tree_search,depth_limited_search,iterative_deepening_search,best_first_graph_search,astar_search,greedy_best_first_graph_search,runSearchers
+from search import breadth_first_tree_search,depth_first_tree_search,depth_limited_search,iterative_deepening_search,breadth_first_graph_search,astar_search,depth_first_graph_search,greedy_best_first_graph_search,runSearchers
 import utils
 from scipy.spatial import Delaunay
 
@@ -27,12 +27,12 @@ while(True):
         points = utils.generateRandomPoints(nPoints, min, max)
         triang = Delaunay(points)
         vertices = triang.vertices
-        matrix = utils.createGrid(points, vertices)
+        dictActions = utils.createDict(points, vertices)
         initialPoint = utils.searchInitialPoint(points)
         goalPoint = utils.searchGoalPoint(points)
-        problem = Robot(initialPoint, goalPoint, matrix)
+        problem = Robot(initialPoint, goalPoint, dictActions)
 
-        searchers=[breadth_first_tree_search,depth_first_tree_search,depth_limited_search,iterative_deepening_search,greedy_best_first_graph_search,astar_search]
+        searchers=[breadth_first_tree_search,breadth_first_graph_search,depth_first_graph_search,depth_limited_search,iterative_deepening_search,greedy_best_first_graph_search,astar_search]
         runSearchers(problem,points,searchers,limit)
     else:
         break
