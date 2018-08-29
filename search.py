@@ -1,5 +1,5 @@
 from utils import FIFOQueue,PriorityQueue,Stack
-#import psutil
+import psutil
 import sys
 import utils
 import os
@@ -69,7 +69,6 @@ def tree_search(problem,fringe):
     max_depth = 0
     while fringe:
         node=fringe.pop()
-        """
         if node.depth > max_depth:
             max_depth = node.depth
             if max_depth < 50 or max_depth % 1000 == 0:
@@ -77,7 +76,6 @@ def tree_search(problem,fringe):
                 py = psutil.Process(pid)
                 memoryUse = py.memory_info()[0] / 1024 / 1024
                 print ("Reached depth: "+ unicode(max_depth)+" Open len: "+ unicode(len(fringe))+" Memory used (MBytes): "+ unicode(memoryUse))
-        """
         if problem.goal_test(node.state):
             return node
         newNode=node.expand(problem)
@@ -123,12 +121,10 @@ def depth_limited_search(problem, limit=10):
 def iterative_deepening_search(problem):
     for depth in xrange(sys.maxint):
         result = depth_limited_search(problem, depth)
-        """
         pid = os.getpid()
         py = psutil.Process(pid)
         memoryUse = py.memory_info()[0]/1024/1024
         print('end depth_limited_search at depth', depth, 'mem (GBytes)', memoryUse)
-        """
         if result is not 'cutoff':
             return result
 
@@ -138,7 +134,6 @@ def graph_search(problem, fringe):
     max_depth = 0
     while fringe:
         node = fringe.pop()
-        """
         if node.depth > max_depth:
             max_depth = node.depth
             if max_depth < 50 or max_depth % 1000 == 0:
@@ -146,7 +141,6 @@ def graph_search(problem, fringe):
                 py = psutil.Process(pid)
                 memoryUse = py.memory_info()[0] / 1024 / 1024
                 print ("Reached depth: "+ unicode(max_depth)+" Open len: "+ unicode(len(fringe))+" Memory used (MBytes): "+ unicode(memoryUse))
-        """
         if problem.goal_test(node.state):
             return node
         serial = node.state.__str__()

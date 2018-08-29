@@ -1,6 +1,6 @@
-import math,bisect
-import random
-from matplotlib import pyplot as plt
+import math,bisect,random, matplotlib
+from matplotlib import animation,pyplot as plt
+import numpy as np
 
 
 
@@ -88,7 +88,7 @@ def searchPoint(array,points):
 
 
 def printResult(matrix,result,algoritmo,points,problem):
-
+    fig=plt.figure()
     for point in matrix:
         for neighbour in matrix[point]:
             plt.plot([point[0], neighbour[0]], [point[1], neighbour[1]], 'black',linewidth=0.3 )
@@ -99,17 +99,34 @@ def printResult(matrix,result,algoritmo,points,problem):
     plt.plot(problem.goal.x, problem.goal.y, 'rp', markersize=14)
 
     plt.title(algoritmo+"--COST: --N.PASSI")
-    plt.draw()
     plt.show(block=False)
     plt.pause(1)
     i=0 # variabile utile per stampare il numero di passi compiuti dal robot
     for node in reversed(result):
-        plt.title(algoritmo+"--COST: "+unicode(node.path_cost)+"--N.PASSI:"+unicode(i))
-        if (node.parent):
-            plt.plot([node.parent.state.x, node.state.x], [node.parent.state.y, node.state.y], '-r',linewidth=2)
-            plt.pause(1.5)
-        i+=1
+        if(plt.fignum_exists(fig.number)):
+            plt.title(algoritmo+"--COST: "+unicode(node.path_cost)+"--N.PASSI:"+unicode(i))
+            if (node.parent):
+                plt.plot([node.parent.state.x, node.state.x], [node.parent.state.y, node.state.y], '-r',linewidth=2)
+                plt.pause(1.5)
+            i+=1
+        else:
+            break
     plt.close()
+
+    """
+    plt.switch_backend('TKAgg')
+    fig=plt.figure()
+    result_path=result[::-1]
+    l, = plt.plot([], [], 'r-')
+
+    def animate(i,line):
+
+        plt.title(algoritmo + "--COST: " + unicode(result_path[i].path_cost) + "--N.PASSI:" + unicode(i))
+        if (result_path[i].parent):
+            line.set_data(data[[result_path[i].parent.state.x, result_path[i].state.x], [result_path[i].parent.state.y, result_path[i].state.y], '-r', linewidth=2)]
+        return line
+    animation.FuncAnimation(fig,animate,frames=len(result_path),fargs=(l),interval=2,blit=True)
+    """
 
 def generateRandomPoints(num,min=0,max=10):
     i=1
