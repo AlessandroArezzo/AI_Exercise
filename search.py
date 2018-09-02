@@ -33,13 +33,7 @@ class Node:
             self.depth=0
 
     def __repr__(self):
-        if hasattr(self,'f'):
-            return "<Node: f=%d, depth=%d, h=%d\n%s>" % (self.f,
-                                                         self.depth,
-                                                         self.h,
-                                                         self.state)
-        else:
-            return "<Node: depth=%d\n%s, Cost:%f>" % (self.depth,self.state,self.path_cost)
+        return "<Node: depth=%d\n%s, Cost:%f>" % (self.depth,self.state,self.path_cost)
 
     def path(self):
         """Ricostruisce il cammino dal nodo corrente alla radice"""
@@ -124,7 +118,7 @@ def iterative_deepening_search(problem):
         pid = os.getpid()
         py = psutil.Process(pid)
         memoryUse = py.memory_info()[0]/1024/1024
-        print('end depth_limited_search at depth', depth, 'mem (GBytes)', memoryUse)
+        print("end depth_limited_search at depth "+unicode(depth)+ " mem (GBytes) "+unicode(memoryUse))
         if result is not 'cutoff':
             return result
 
@@ -184,7 +178,7 @@ def runSearchers(problem,points,searchers=[breadth_first_tree_search,depth_first
             start=time.time()
             node_result = s(problem)
             elapsed=time.time()-start
-        print("Elapsed time: " ,elapsed , "seconds")
+        print("Elapsed time: " +unicode(elapsed )+ "seconds")
         if(node_result==None):
             print("Non trovata soluzione con l'algoritmo "+s.__name__)
         elif(node_result=='cutoff'):
@@ -193,3 +187,31 @@ def runSearchers(problem,points,searchers=[breadth_first_tree_search,depth_first
             path_result = node_result.path()
             print ("Printing result...")
             utils.printResult(problem.grid, path_result, s.__name__, points, problem)
+
+"""
+def runExperiment(function,n_execution,nPoints,min,max,limit=10):
+    sumTime=0
+    sumCost=0
+    sumSteps=0
+    sumDepth=0
+    sumMemory=0
+    for i in range(0,n_execution):
+        points = utils.generateRandomPoints(nPoints, min, max)
+        triang = Delaunay(points)
+        vertices = triang.vertices
+        dictActions = utils.createDict(points, vertices)
+        initialPoint = utils.searchInitialPoint(points)
+        goalPoint = utils.searchGoalPoint(points)
+        problem = Robot(initialPoint, goalPoint, dictActions)
+        start = time.time()
+        node_result = function(problem)
+        sumTime+=  time.time() - start
+        sumCost+=node_result.path_cost
+        sumDepth+=node_result.depth
+        sumSteps+=node_result.path().__len__()-1
+        pid = os.getpid()
+        py = psutil.Process(pid)
+        sumMemory+=(py.memory_info()[0] / 1024 / 1024)
+
+    print "RESULTS:\nTime: "+unicode(sumTime/n_execution)+"--Cost: "+unicode(sumCost/n_execution)+"--Depth: "+unicode(sumDepth/n_execution)+"--Steps: "+unicode(sumSteps/n_execution)+"--Memory: "+unicode(sumMemory/n_execution)
+"""

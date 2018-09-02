@@ -1,6 +1,6 @@
 from search import Problem
 from copy import deepcopy
-import utils
+from utils import distance
 
 
 class Robot(Problem):
@@ -11,10 +11,10 @@ class Robot(Problem):
      In questa implementazione si suppone di avere come descrizione del problema una tessellationGrid
      del tipo: [[(ptoX),(vicino n1 del ptoX),(vicino n2 del ptoX)...],[...()...],...]"""
 
-    def __init__(self,initialPoint,goalPoint,tessellationGrid):
+    def __init__(self,initialPoint,goalPoint,dict):
         self.initial=RobotState(initialPoint)
         self.goal=RobotState(goalPoint)
-        self.grid=tessellationGrid
+        self.dictActions=dict
         print("Start problem")
         print self.initial
 
@@ -31,19 +31,11 @@ class Robot(Problem):
     def goal_test(self, state):
         return state.x==self.goal.x and state.y==self.goal.y
 
-    def getActions(self,state):
-        return self.grid[(state.x,state.y)]
-        """
-        actions=[]
-        for point in self.grid:
-            if(point[0]==(state.x,state.y)):
-                for i in range(1,point.__len__()):
-                    actions.append(point[i])
-                return actions
-        return None
-        """
+    def getActistons(self,state):
+        return self.dictActions[(state.x,state.y)]
+
     def path_cost(self, c, state1, action, state2):
-        return c+utils.distance((state1.x,state1.y),(state2.x,state2.y))
+        return c+distance((state1.x,state1.y),(state2.x,state2.y))
 
     def h(self,node):
         return node.state.h(self.goal)
@@ -63,7 +55,7 @@ class RobotState:
         return ch
 
     def h(self,goal):
-        return utils.distance((self.x,self.y),(goal.x,goal.y))
+        return distance((self.x,self.y),(goal.x,goal.y))
 
 
 

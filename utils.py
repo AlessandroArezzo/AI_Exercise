@@ -1,12 +1,10 @@
-import math,bisect,random, matplotlib
-from matplotlib import animation,pyplot as plt
-import numpy as np
+import math,bisect,random
+from matplotlib import pyplot as plt
 
 
 
 def distance((ax, ay), (bx, by)):
     return math.hypot((ax - bx), (ay - by))
-
 
 
 class Queue:
@@ -93,8 +91,8 @@ def printResult(matrix,result,algoritmo,points,problem):
         for neighbour in matrix[point]:
             plt.plot([point[0], neighbour[0]], [point[1], neighbour[1]], 'black',linewidth=0.3 )
 
-    plt.xlim(searchMinX(points)-len(points)*10/100, searchMaxX(points)+len(points)*10/100)
-    plt.ylim(searchMinY(points)-len(points)*10/100, searchMaxY(points)+len(points)*10/100)
+    plt.xlim(searchMinX(points)-10, searchMaxX(points)+ 10)
+    plt.ylim(searchMinY(points)-10, searchMaxY(points)+10)
     plt.plot(problem.initial.x, problem.initial.y, 'bp', markersize=14)
     plt.plot(problem.goal.x, problem.goal.y, 'rp', markersize=14)
 
@@ -103,8 +101,10 @@ def printResult(matrix,result,algoritmo,points,problem):
     plt.pause(1)
     i=0 # variabile utile per stampare il numero di passi compiuti dal robot
     for node in reversed(result):
+        print node
+        print "--Cost: "+unicode(node.path_cost)+"--#STEPS: "+unicode(i)
         if(plt.fignum_exists(fig.number)):
-            plt.title(algoritmo+"--COST: "+unicode(node.path_cost)+"--N.PASSI:"+unicode(i))
+            plt.title(algoritmo+"--COST: "+unicode(node.path_cost)+"--#STEPS:"+unicode(i))
             if (node.parent):
                 plt.plot([node.parent.state.x, node.state.x], [node.parent.state.y, node.state.y], '-r',linewidth=2)
                 plt.pause(1.5)
@@ -112,21 +112,6 @@ def printResult(matrix,result,algoritmo,points,problem):
         else:
             break
     plt.close()
-
-    """
-    plt.switch_backend('TKAgg')
-    fig=plt.figure()
-    result_path=result[::-1]
-    l, = plt.plot([], [], 'r-')
-
-    def animate(i,line):
-
-        plt.title(algoritmo + "--COST: " + unicode(result_path[i].path_cost) + "--N.PASSI:" + unicode(i))
-        if (result_path[i].parent):
-            line.set_data(data[[result_path[i].parent.state.x, result_path[i].state.x], [result_path[i].parent.state.y, result_path[i].state.y], '-r', linewidth=2)]
-        return line
-    animation.FuncAnimation(fig,animate,frames=len(result_path),fargs=(l),interval=2,blit=True)
-    """
 
 def generateRandomPoints(num,min=0,max=10):
     i=1
@@ -159,21 +144,7 @@ def searchGoalPoint(points):
     return point
 
 def createDict(points,vertices):
-    #result=[]
     dict={}
-    """
-    for i in range(0,len(points)):
-        tmp=[]
-        tmp.append(points[i])
-        result.append(tmp)
-    for v in vertices:
-        for j in v:
-            for z in v:
-                if  j!=z and (not searchPoint(result[j],points[z])):
-                    result[j].append(points[z])
-                    
-    """
-
     for v in vertices:
         for j in v:
             serial = points[j]
@@ -182,5 +153,5 @@ def createDict(points,vertices):
             for z in v:
                 if(z!=j and (not searchPoint(dict[serial],points[z]))):
                     dict[serial].append(points[z])
-
     return dict
+
