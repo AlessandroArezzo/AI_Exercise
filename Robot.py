@@ -31,7 +31,7 @@ class Robot(Problem):
     def goal_test(self, state):
         return state.x==self.goal.x and state.y==self.goal.y
 
-    def getActistons(self,state):
+    def getActions(self,state):
         return self.dictActions[(state.x,state.y)]
 
     def path_cost(self, c, state1, action, state2):

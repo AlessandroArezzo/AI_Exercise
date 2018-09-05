@@ -186,7 +186,7 @@ def runSearchers(problem,points,searchers=[breadth_first_tree_search,depth_first
         else:
             path_result = node_result.path()
             print ("Printing result...")
-            utils.printResult(problem.grid, path_result, s.__name__, points, problem)
+            utils.printResult(problem.dictActions, path_result, s.__name__, points, problem)
 
 """
 def runExperiment(function,n_execution,nPoints,min,max,limit=10):
