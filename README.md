@@ -44,7 +44,7 @@ restituisce le coppie (actions,nexts) per ogni stato nexts generato attraverso l
 
 La classe RobotState definisce lo stato del robot contraddistinto dalle coordinate x ed y del piano. Implementa i metodi move(self,point) che restituisce il nuovo stato avente point come coordinate ed h(self,goal) che calcola il valore della funzione euristica: distanza in linea d'area tra il punto relativo allo stato ed il goal.
 
-<h3>Utils.py<h3>
+<h3>Utils.py</h3>
 In questo file sono definite le classi ed i metodi ausiliari. Più precisamente, vi sono le implementazioni relative alle code (vedere fonti) ed ad alcuni metodi utili al fine di generare gli elementi necessari per l'istanziazione del problema ed a stampare i risultati per via grafica.
 
 Per gli elementi necessari ad istanziare il problema vi sono le seguenti funzioni:
