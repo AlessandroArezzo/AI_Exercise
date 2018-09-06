@@ -1,5 +1,6 @@
 import math,bisect,random
 from matplotlib import pyplot as plt
+
 def distance((ax, ay), (bx, by)):
     return math.hypot((ax - bx), (ay - by))
 
