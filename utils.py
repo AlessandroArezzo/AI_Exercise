@@ -1,11 +1,7 @@
 import math,bisect,random
 from matplotlib import pyplot as plt
-
-
-
 def distance((ax, ay), (bx, by)):
     return math.hypot((ax - bx), (ay - by))
-
 
 class Queue:
     def __init__(self):
@@ -85,10 +81,10 @@ def searchPoint(array,points):
     return False
 
 
-def printResult(matrix,result,algoritmo,points,problem):
+def printResult(dictlines,result,algoritmo,points,problem):
     fig=plt.figure()
-    for point in matrix:
-        for neighbour in matrix[point]:
+    for point in dictlines:
+        for neighbour in dictlines[point]:
             plt.plot([point[0], neighbour[0]], [point[1], neighbour[1]], 'black',linewidth=0.3 )
 
     plt.xlim(searchMinX(points)-10, searchMaxX(points)+ 10)
@@ -143,9 +139,9 @@ def searchGoalPoint(points):
             point=p
     return point
 
-def createDict(points,vertices):
+def createDict(points,delauneyObject):
     dict={}
-    for v in vertices:
+    for v in delauneyObject.vertices:
         for j in v:
             serial = points[j]
             if serial not in dict:

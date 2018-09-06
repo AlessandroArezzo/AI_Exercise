@@ -187,31 +187,3 @@ def runSearchers(problem,points,searchers=[breadth_first_tree_search,depth_first
             path_result = node_result.path()
             print ("Printing result...")
             utils.printResult(problem.dictActions, path_result, s.__name__, points, problem)
-
-"""
-def runExperiment(function,n_execution,nPoints,min,max,limit=10):
-    sumTime=0
-    sumCost=0
-    sumSteps=0
-    sumDepth=0
-    sumMemory=0
-    for i in range(0,n_execution):
-        points = utils.generateRandomPoints(nPoints, min, max)
-        triang = Delaunay(points)
-        vertices = triang.vertices
-        dictActions = utils.createDict(points, vertices)
-        initialPoint = utils.searchInitialPoint(points)
-        goalPoint = utils.searchGoalPoint(points)
-        problem = Robot(initialPoint, goalPoint, dictActions)
-        start = time.time()
-        node_result = function(problem)
-        sumTime+=  time.time() - start
-        sumCost+=node_result.path_cost
-        sumDepth+=node_result.depth
-        sumSteps+=node_result.path().__len__()-1
-        pid = os.getpid()
-        py = psutil.Process(pid)
-        sumMemory+=(py.memory_info()[0] / 1024 / 1024)
-
-    print "RESULTS:\nTime: "+unicode(sumTime/n_execution)+"--Cost: "+unicode(sumCost/n_execution)+"--Depth: "+unicode(sumDepth/n_execution)+"--Steps: "+unicode(sumSteps/n_execution)+"--Memory: "+unicode(sumMemory/n_execution)
-"""

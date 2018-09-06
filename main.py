@@ -42,7 +42,7 @@ while(True):
         #Effettuaffettua suddivisione del piano in poligoni aventi per vertici i punti generati
         triang = Delaunay(points)
         #Costruisce il dizionario che associa ad ogni punto i suoi vicini nel piano diviso in poligoni
-        dictActions = utils.createDict(points, triang.vertices)
+        dictActions = utils.createDict(points, triang)
         #Si definiscono i punti iniziale (quello pi? a sx nel piano) e obiettivo (quello pi? a dx)
         initialPoint = utils.searchInitialPoint(points)
         goalPoint = utils.searchGoalPoint(points)
@@ -86,7 +86,7 @@ while(True):
             print "EXPERIMENT: "+unicode(i)
             points = utils.generateRandomPoints(nPoints, min, max)
             triang = Delaunay(points)
-            dictActions = utils.createDict(points, triang.vertices)
+            dictActions = utils.createDict(points, triang)
             initialPoint = utils.searchInitialPoint(points)
             goalPoint = utils.searchGoalPoint(points)
             problem = Robot(initialPoint, goalPoint, dictActions)
