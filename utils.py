@@ -4,6 +4,12 @@ from matplotlib import pyplot as plt
 def distance((ax, ay), (bx, by)):
     return math.hypot((ax - bx), (ay - by))
 
+def searchPoint(array,points):
+    for p in array:
+        if p==points:
+            return True
+    return False
+
 class Queue:
     def __init__(self):
         pass #abstract
@@ -45,7 +51,7 @@ class PriorityQueue(Queue):
             return self.A.pop()[1]
 
 
-#Metodi atti alla corretta visualizzazione del piano, garantiscono di visualizzare il piano con i giusti limiti
+#Funzioni atte alla corretta visualizzazione del piano, garantiscono di visualizzare il piano con i giusti limiti
 def searchMinX(vertices):
     minX=1000
     for v in vertices:
@@ -74,16 +80,11 @@ def searchMaxY(vertices):
             maxY=v[1]
     return maxY
 
-
-def searchPoint(array,points):
-    for p in array:
-        if p==points:
-            return True
-    return False
-
-
+"""printResult stampa la soluzione trovata (result) attraverso una simulazione del robot che mostra il tragitto compiuto dal robot stesso
+nel raggiungere il goal a partire dallo stato iniziale attraverso la soluzione ricavata"""
 def printResult(dictlines,result,algoritmo,points,problem):
     fig=plt.figure()
+    #Genera piano con ostacoli poligonali convessi
     for point in dictlines:
         for neighbour in dictlines[point]:
             plt.plot([point[0], neighbour[0]], [point[1], neighbour[1]], 'black',linewidth=0.3 )
@@ -97,6 +98,7 @@ def printResult(dictlines,result,algoritmo,points,problem):
     plt.show(block=False)
     plt.pause(1)
     i=0 # variabile utile per stampare il numero di passi compiuti dal robot
+    #Ciclo che colora di rosso ad ogni iterazione la corrispondente linea in cui il robot sta transitando
     for node in reversed(result):
         print node
         print "--Cost: "+unicode(node.path_cost)+"--#STEPS: "+unicode(i)
@@ -110,6 +112,7 @@ def printResult(dictlines,result,algoritmo,points,problem):
             break
     plt.close()
 
+#generateRandomPoints genera num punti casuali con range delle coordinate [min,max]
 def generateRandomPoints(num,min=0,max=10):
     i=1
     result=[]
@@ -140,8 +143,12 @@ def searchGoalPoint(points):
             point=p
     return point
 
+"""createDict crea un dizionario che associa ad ogni punto in points un array contenente tutti i vicini di tale punto,
+utilizzando le proprieta' dell'oggetto delauneyObject del tipo dell'oggetto restituito dal metodo Delauney della libreria scipy.spatial"""
 def createDict(points,delauneyObject):
     dict={}
+    """delauneyObject.vertices restituisce una lista di array ciascuno rappresentante i vertici di un poligono.
+    Tali vertici sono espressi con valori interi che rappresentano le posizioni in points dei punti appartenenti a quel poligono"""
     for v in delauneyObject.vertices:
         for j in v:
             serial = points[j]

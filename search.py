@@ -5,6 +5,7 @@ import utils
 import os
 import time
 
+"""Definizione della classe problem che fornisce un implementazione di default per l'interfaccia di un generico problema"""
 class Problem:
 
     def __init__(self,initial,goal):
@@ -20,6 +21,7 @@ class Problem:
     def path_cost(self, c, state1, action, state2):
         return c + 1
 
+"""Definizione della classe Node che rappresenta i nodi dell'albero/grafo di ricerca"""
 class Node:
 
     def __init__(self, state, parent=None, action=None, path_cost=0):
@@ -46,8 +48,7 @@ class Node:
     def expand(self, problem):
         """
         Per ogni coppia (action, state) restituita dal metodo successor a partire dallo stato corrispondente
-         al nodo in cui ci si trova (self, siamo nella classe Node) ed il quale si passa a successor stesso,
-         si crea un oggetto Node. Si ritornano infine tutti i nodi creati (la frontiera espansa)
+         al nodo in cui ci si trova, si crea un oggetto Node. Si ritornano infine tutti i nodi creati (la frontiera espansa)
         """
         return[Node(next_state, self, action,
                    problem.path_cost(self.path_cost, self.state, action, next_state))
@@ -58,6 +59,7 @@ class Node:
 
 # Uninformed Search algorithms
 
+"""Ricerca su albero, stampa informazioni sull'avanzamento dell'esecuzione"""
 def tree_search(problem,fringe):
     fringe.append(Node(problem.initial))
     max_depth = 0
@@ -85,7 +87,7 @@ def breadth_first_tree_search(problem):
 def depth_first_tree_search(problem):
     return tree_search(problem, Stack())
 
-
+"""Ricerca a profondita' limitata. Utilizza un implementazione che prevede di tenere traccia in un dizionario degli stati gia' visitati"""
 def depth_limited_search(problem, limit=10):
     closed={}
     def recursive_dls(node, problem, limit):
@@ -122,6 +124,7 @@ def iterative_deepening_search(problem):
         if result is not 'cutoff':
             return result
 
+"""Ricerca su grafo, stampa informazioni sull'avanzamento dell'esecuzione"""
 def graph_search(problem, fringe):
     closed = {}
     fringe.append(Node(problem.initial))
@@ -150,6 +153,8 @@ def depth_first_graph_search(problem):
     return graph_search(problem, Stack())
 
 # Informed (Heuristic) Search
+"""Ricerche euristiche utilizzano algoritmo di ricerca su grafo"""
+
 def best_first_graph_search(problem, f):
     return graph_search(problem, PriorityQueue(min, f))
 
@@ -166,7 +171,8 @@ def astar_search(problem, h=None):
         return priority
     return best_first_graph_search(problem, f)
 
-
+"""runSearchers esegue gli algoritmi ricevuti come parametri e stampa i risultati invocando la funzione printResult 
+definita in utils.py."""
 def runSearchers(problem,points,searchers=[breadth_first_tree_search,depth_first_tree_search,depth_limited_search,iterative_deepening_search,greedy_best_first_graph_search,astar_search],limit=10):
     for s in searchers:
         print ("Running %s" % s.__name__)

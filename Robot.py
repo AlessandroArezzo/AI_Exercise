@@ -5,19 +5,13 @@ from utils import distance
 
 class Robot(Problem):
 
-    """Nell'esempio del Puzzle si crea la configurazione iniziale attraverso un metodo make_initial_state che
-     crea una configurazione random del problema. In tal caso andrebbe creato allo stesso modo il nodo del goal
-     (nel puzzle non crea uno stato per il goal, configurazione statica).
-     In questa implementazione si suppone di avere come descrizione del problema una tessellationGrid
-     del tipo: [[(ptoX),(vicino n1 del ptoX),(vicino n2 del ptoX)...],[...()...],...]"""
-
+    """L'attributo dict e' un dizionario che associa ad ogni punto del piano un array contenente tutti i punti ad esso adiacenti"""
     def __init__(self,initialPoint,goalPoint,dict):
         self.initial=RobotState(initialPoint)
         self.goal=RobotState(goalPoint)
         self.dictActions=dict
         print("Start problem")
         print self.initial
-
 
     def successor(self, state):
         result=[]
@@ -31,7 +25,9 @@ class Robot(Problem):
     def goal_test(self, state):
         return state.x==self.goal.x and state.y==self.goal.y
 
+
     def getActions(self,state):
+        """Ricerca nel dizionario il punto corrispondente allo stato state e vi ritorna l'array ad esso associato"""
         return self.dictActions[(state.x,state.y)]
 
     def path_cost(self, c, state1, action, state2):
@@ -55,6 +51,7 @@ class RobotState:
         return ch
 
     def h(self,goal):
+        """Come euristica si usa la distanza in linea d'area tra lo stato ed il goal"""
         return distance((self.x,self.y),(goal.x,goal.y))
 
 
