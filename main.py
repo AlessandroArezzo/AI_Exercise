@@ -1,4 +1,4 @@
-from search import breadth_first_tree_search,depth_limited_search,iterative_deepening_search,breadth_first_graph_search,astar_search,depth_first_graph_search,greedy_best_first_graph_search,runSearchers
+from search import breadth_first_tree_search,depth_limited_search,iterative_deepening_search,breadth_first_graph_search,astar_search,depth_first_graph_search,greedy_best_first_graph_search,runSearchers,init_sumMemory,get_sumMemory
 from scipy.spatial import Delaunay
 import utils
 from Robot import Robot
@@ -30,7 +30,7 @@ while(True):
             max = input("Inserisci limite superiore dei valori dei punti\n")
     except:
         print("Inserisci dei valori numerici corretti")
-    # Se l'utente ha inserito uno nel men?, si richiede di inserire la profondit? limite per la ricerca ad approfondimento limitato
+    # Se l'utente ha inserito uno nel menu', si richiede di inserire la profondit? limite per la ricerca ad approfondimento limitato
     if menu==1:
         try:
             while (limit < 0):
@@ -39,11 +39,11 @@ while(True):
             print("Inserisci dei valori numerici corretti")
         #Genera punti casualmente
         points = utils.generateRandomPoints(nPoints, min, max)
-        #Effettuaffettua suddivisione del piano in poligoni aventi per vertici i punti generati
+        #Effettua suddivisione del piano in poligoni aventi per vertici i punti generati
         triang = Delaunay(points)
         #Costruisce il dizionario che associa ad ogni punto i suoi vicini nel piano diviso in poligoni
         dictActions = utils.createDict(points, triang)
-        #Si definiscono i punti iniziale (quello pi? a sx nel piano) e obiettivo (quello pi? a dx)
+        #Si definiscono i punti iniziale (quello piu' a sx nel piano) e obiettivo (quello pi? a dx)
         initialPoint = utils.searchInitialPoint(points)
         goalPoint = utils.searchGoalPoint(points)
         """Instanzia il problema e lancia metodo runSearchers a cui si passano i nomi delle funzioni che implementano gli algortimi 
@@ -53,13 +53,19 @@ while(True):
         runSearchers(problem,points,searchers,limit)
     elif menu==2:
         #Richiede quale algoritmo si vuole testare
-        print "--Inserisci 1 per testare algoritmo breadth first tree search"
-        print "--Inserisci 2 per testare algoritmo breadth first graph search"
-        print "--Inserisci 3 per testare algoritmo depth first graph search"
-        print "--Inserisci 4 per testare algoritmo iterative deepening search"
-        print "--Inserisci 5 per testare algoritmo greedy best first graph search"
-        print "--Inserisci 6 per testare algoritmo astar_search"
-        alg=input()
+        while True:
+            print "--Inserisci 1 per testare algoritmo breadth first tree search"
+            print "--Inserisci 2 per testare algoritmo breadth first graph search"
+            print "--Inserisci 3 per testare algoritmo depth first graph search"
+            print "--Inserisci 4 per testare algoritmo iterative deepening search"
+            print "--Inserisci 5 per testare algoritmo greedy best first graph search"
+            print "--Inserisci 6 per testare algoritmo astar_search"
+            try:
+                alg = input()
+                break
+            except:
+                print("Inserisci dei valori numerici corretti")
+
         """Sulla base del codice inserito dall'utente imposta la variabile f con il nome dell'algoritmo da eseguire"""
         if alg==1:
             f=breadth_first_tree_search
@@ -76,11 +82,18 @@ while(True):
         else:
             break
         #Richiede numero di esperimenti da eseguire
-        n_exec=input("Inserisci numero di esperimenti da effettuare\n")
+        while True:
+            try:
+                n_exec=input("Inserisci numero di esperimenti da effettuare\n")
+                break
+            except:
+                print("Inserisci dei valori numerici corretti")
         sumTime = 0
         sumCost = 0
         sumDepth = 0
-        sumMemory = 0
+        init_sumMemory()
+        """Inizializza la variabile globale sumMemory definita in search.py. Al termine del ciclo for tale variabile conterra' 
+        la somma della memoria usata da tutte le esecuzioni dell'algoritmo"""
         #Esegue algoritmo per il numero di volte eseguito, ad ogni iterazione lo esegue su una istanza diversa
         for i in range(0, n_exec):
             print "EXPERIMENT: "+unicode(i)
@@ -95,10 +108,7 @@ while(True):
             sumTime += time.time() - start
             sumCost += node_result.path_cost
             sumDepth += node_result.depth
-            pid = os.getpid()
-            py = psutil.Process(pid)
-            sumMemory += (py.memory_info()[0] / 1024 / 1024)
 
         print "RESULTS:\nTime: " + unicode(sumTime / n_exec) + "--Cost: " + unicode(
-            sumCost / n_exec) + "--Depth: " + unicode(sumDepth / n_exec) +"--Memory: " + unicode(sumMemory / n_exec)
+            sumCost / n_exec) + "--Depth: " + unicode(sumDepth / n_exec) +"--Memory: " + unicode(get_sumMemory() / n_exec)
 
