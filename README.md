@@ -18,7 +18,7 @@ first graph, depth first tree, depth first graph, depth limited, iterative deepe
 ed A*.  Per l'implementazione, sono definite due funzioni generiche tree_search(problem,fringe) e graph_search(problem,fringe) che definiscono il codice per l'esecuzione degli algoritmi di ricerca su albero e su grafo. Tali funzioni sono poi 
 invocate dalle funzioni relative ai vari algoritmi sopra citati, le quali, a seconda della tecnica da questi prevista, passano come parametro un tipo di coda piuttosto che un'altra. (BFS usa una coda FIFO, DFS stack, e cosi via). Le classi relative alle code sono definite nel file utils.py.
 
-Le  classe  Problem  ha  due  attributi,  lo  stato  inziale  e  quello  obiettivo,  e  fornisce  l’implementazione
+La  classe  Problem  ha  due  attributi,  lo  stato  iniziale  e  quello  obiettivo,  e  fornisce  l’implementazione
 di default dei metodi successor(self,state) , goaltest(self, state) e pathcost(self, c, state1, action, state2), il quale restituisce il costo c incrementato di 1.  
 
 La classe Node ha gli attributi state, parent, action, depth
@@ -30,11 +30,11 @@ Per la compilazione di tale file sono necessari i package: psutil, sys, os e tim
 
 
 <h3>Robot.py</h3>
-In questo file sono definite le classi Robot e RoboState.
+In questo file sono definite le classi Robot e RobotState.
 
-La classe Robot eredita dalla classe Problem presente definita nel file search.py. Tale classe possiede anche un attributo
+La classe Robot eredita dalla classe Problem definita nel file search.py. Tale classe possiede anche un attributo
 dictActions che è un dizionario che associa ad ogni punto un array contenente tutti i suoi punti vicini. 
-Nella classe vi è una ridefinizione dei metodi goal_test(self, state) in cui il confronto confronta le coordinate degli 
+Nella classe vi è una ridefinizione dei metodi goal_test(self, state) che confronta le coordinate degli 
 stati e path_cost(self, c, state1, action, state2) in cui il costo dell'azione action (che rappresenta il punto in cui 
 l'agente si sposta) è considerato come la distanza in linea d'area  tra lo stato state1 e lo stato state2 (calcolata usando la funzione distance in utils.py). (L'azione è rappresentata dal punto in cui ci si sposta eseguendo l'azione stessa).
 Il metodo getActions(self,state), riceve un oggetto RobotState state e ricerca in dictActions il punto associato
@@ -50,11 +50,11 @@ In questo file sono definite le classi ed i metodi ausiliari. Più precisamente,
 Per gli elementi necessari ad istanziare il problema vi sono le seguenti funzioni:
 <ul>
   <li>generateRandomPoints(num,min=0,max=10): restituisce array con num punti generati casualmente aventi range [min,max]</li>
-  <li>searchInitialPoint(points) e searchGoalPoint(points): ricevuti i punti points generati, restituiscono come punto inziale quello avente ascissa minore e come goal quello avente ascissa maggiore.></li>
-  <li>createDict(points,vertices): ricevuto un oggetto del tipo dell'oggetto restituito dal metodo Delauney della libreria scipy.spatial, restituisce un dizionario che associa a ciascun punto di points un array contenente tutti i suoi vicini secondo la suddivisione del piano effettuata dal metodo Delauney.</li>
+  <li>searchInitialPoint(points) e searchGoalPoint(points): ricevuti i punti points generati, restituiscono come punto inziale quello avente ascissa minore e come goal quello avente ascissa maggiore.</li>
+  <li>createDict(points,delauneyObject): ricevuto un oggetto del tipo dell'oggetto restituito dal metodo Delauney della libreria scipy.spatial, restituisce un dizionario che associa a ciascun punto di points un array contenente tutti i suoi vicini secondo la suddivisione del piano effettuata dal metodo Delauney.</li>
 </ul>
 
-Per la stampa dei risultati: printResult(dictlines,result,algoritmo,points,problem) esegue una stampa dei risultati mostrando una simulziaone dell'avanzamento del robot per via grafica. Usa le funzioni searchMinX, searchMaxX, searchMinY e searchMaxY, il dizionario dictlines che associa a ciascun punto i suoi vicini ed appunto points contenente l'array dei vari punti, per generare il piano con presenti i vari poligoni convessi che lo suddividono. Attraverso pyplot della libreria matplotlib, si aggiungono iterativamente le linee relative allo spostamento del robot secondo la soluzione trovata, la quale è specificata dal parametro results.
+Per la stampa dei risultati: printResult(dictlines,result,algoritmo,points,problem) esegue una stampa dei risultati mostrando una simulaziaone dell'avanzamento del robot per via grafica. Usa le funzioni searchMinX, searchMaxX, searchMinY e searchMaxY, il dizionario dictlines che associa a ciascun punto i suoi vicini ed appunto points contenente l'array dei vari punti, per generare il piano con presenti i vari poligoni convessi che lo suddividono. Attraverso pyplot della libreria matplotlib, si aggiungono iterativamente le linee relative allo spostamento del robot secondo la soluzione trovata, la quale è specificata dal parametro results.
 
 Per la compilazione di tale file sono necessari i package: math,bisect,random e matplotlib.
 
@@ -62,7 +62,7 @@ Per la compilazione di tale file sono necessari i package: math,bisect,random e 
 
 In tale file vi è l' implementazione del menù il cui funzionamento è spiegato nel paragrafo relativo all'utilizzo del codice. Si noti che nonostante in Robot.py vi sia l'implementazione dell'algoritmo DFS Tree, questo non viene invocato dalla classe main poichè per il problema in questione questo raramente riesce a trovare una soluzione.
 
-Si noti inoltre che per creare gli ostacoli oligonali convessi e dividere così il piano, viene usato il metodo Delauney della libreria scipy.spatial. 
+Si noti inoltre che per creare gli ostacoli poligonali convessi e dividere così il piano, viene usato il metodo Delauney della libreria scipy.spatial. 
 
 Per compilare il file è quindi necessario il package scipy.spatial, oltre a: os, time e psutil. 
 
