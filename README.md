@@ -26,6 +26,8 @@ e  pathcost  che  caratterizzano  ciascun  nodo  e  fornisce  l’implementazion
 restituisce un array contenente tutti i nodi successori del nodo in questione (generati attraverso chiamata
 al metodo successor(self,state) definito nella classe Robot in ’Robot.py’).
 
+Inoltre, in tale file vi è una variabile globale sumMemory ed una funzione init_sumMemory() che la inizializza. Tale variabile è utilizzata al fine di tener traccia della somma della quantità di memoria utilizzata dai vari algoritmi; utile per calcolare la media negli esperimenti.
+
 Per la compilazione di tale file sono necessari i package: psutil, sys, os e time.
 
 
