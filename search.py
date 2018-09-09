@@ -81,9 +81,7 @@ def tree_search(problem,fringe):
                 memoryUse = py.memory_info()[0] / 1024 / 1024
                 print ("Reached depth: "+ unicode(max_depth)+" Open len: "+ unicode(len(fringe))+" Memory used (MBytes): "+ unicode(memoryUse))
         if problem.goal_test(node.state):
-            pid = os.getpid()
-            py = psutil.Process(pid)
-            sum_memory+=(py.memory_info()[0] / 1024 / 1024)
+            sum_memory+=memoryUse
             return node
         newNode=node.expand(problem)
         fringe.extend(newNode)
@@ -134,9 +132,7 @@ def iterative_deepening_search(problem):
         memoryUse = py.memory_info()[0]/1024/1024
         print("end depth_limited_search at depth "+unicode(depth)+ " mem (GBytes) "+unicode(memoryUse))
         if result is not 'cutoff':
-            pid = os.getpid()
-            py = psutil.Process(pid)
-            sum_memory+=(py.memory_info()[0] / 1024 / 1024)
+            sum_memory+=memoryUse
             return result
 
 """Ricerca su grafo, stampa informazioni sull'avanzamento dell'esecuzione"""
@@ -155,9 +151,7 @@ def graph_search(problem, fringe):
                 memoryUse = py.memory_info()[0] / 1024 / 1024
                 print ("Reached depth: "+ unicode(max_depth)+" Open len: "+ unicode(len(fringe))+" Memory used (MBytes): "+ unicode(memoryUse))
         if problem.goal_test(node.state):
-            pid = os.getpid()
-            py = psutil.Process(pid)
-            sum_memory+=(py.memory_info()[0] / 1024 / 1024)
+            sum_memory+=memoryUse
             return node
         serial = node.state.__str__()
         if serial not in closed:

@@ -9,6 +9,7 @@ import psutil
 menu=0
 f=None
 while(True):
+    init_sumMemory()
     nPoints = 0
     min = 1
     max = 0
@@ -22,21 +23,25 @@ while(True):
         break
 
     #Altrimenti si richiede inserimento del numero di punti che rappresenteranno gli stati del problema ed il range delle relative coordinate
-    try:
-        while (nPoints < 3):
-            nPoints = input("Inserisci numero di punti in cui suddividere il piano (Inserire valore maggiore uguale a 3)\n")
-        while (min >= max):
-            min = input("Inserisci limite inferiore dei valori dei punti\n")
-            max = input("Inserisci limite superiore dei valori dei punti\n")
-    except:
-        print("Inserisci dei valori numerici corretti")
-    # Se l'utente ha inserito uno nel menu', si richiede di inserire la profondit? limite per la ricerca ad approfondimento limitato
-    if menu==1:
+    while(True):
         try:
-            while (limit < 0):
-                limit = input("Inserisci la profondita' con la quale eseguire l'algoritmo Depth_limited_search (Inserire valore positivo)\n")
+            while (nPoints < 3):
+                nPoints = input("Inserisci numero di punti in cui suddividere il piano (Inserire valore maggiore uguale a 3)\n")
+            while (min >= max):
+                min = input("Inserisci limite inferiore dei valori dei punti\n")
+                max = input("Inserisci limite superiore dei valori dei punti\n")
+            break
         except:
             print("Inserisci dei valori numerici corretti")
+    # Se l'utente ha inserito uno nel menu', si richiede di inserire la profondit? limite per la ricerca ad approfondimento limitato
+    if menu==1:
+        while(True):
+            try:
+                while (limit < 0):
+                    limit = input("Inserisci la profondita' con la quale eseguire l'algoritmo Depth_limited_search (Inserire valore positivo)\n")
+                break
+            except:
+                print("Inserisci dei valori numerici corretti")
         #Genera punti casualmente
         points = utils.generateRandomPoints(nPoints, min, max)
         #Effettua suddivisione del piano in poligoni aventi per vertici i punti generati
@@ -91,7 +96,6 @@ while(True):
         sumTime = 0
         sumCost = 0
         sumDepth = 0
-        init_sumMemory()
         """Inizializza la variabile globale sumMemory definita in search.py. Al termine del ciclo for tale variabile conterra' 
         la somma della memoria usata da tutte le esecuzioni dell'algoritmo"""
         #Esegue algoritmo per il numero di volte eseguito, ad ogni iterazione lo esegue su una istanza diversa
